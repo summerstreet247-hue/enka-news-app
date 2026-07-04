@@ -16,7 +16,9 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app">
+  <div class="app" id="app">
+    <div id="pull-indicator" class="pull-indicator"><span class="spinner"></span><span class="pull-label">引っ張って更新</span></div>
+
     <header class="app-header">
       <p class="app-title">若手演歌歌手最新ニュース！</p>
       <p class="app-sub">好きな歌手の最新情報が、ここに集まります</p>
@@ -24,8 +26,20 @@
 
     <div id="updated-bar" class="updated-bar">読み込んでいます…</div>
 
-    <div class="section-label">新着</div>
+    <div class="artist-filters" id="artist-filters">
+      <button class="filter-btn" data-artist="青山新">青山新</button>
+      <button class="filter-btn" data-artist="二見颯一">二見颯一</button>
+      <button class="filter-btn" data-artist="真田ナオキ">真田ナオキ</button>
+    </div>
+
+    <div class="section-label">
+      <span id="section-label-text">新着</span>
+      <button id="reset-filter" class="reset-link" hidden>すべて見る</button>
+    </div>
     <div id="feed" class="feed"></div>
+    <div id="load-more-wrap" class="load-more-wrap" hidden>
+      <button id="load-more-btn" class="load-more-btn">次へ（もっと見る）</button>
+    </div>
   </div>
 
   <script src="app.js"></script>

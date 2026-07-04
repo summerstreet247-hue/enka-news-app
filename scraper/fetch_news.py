@@ -14,17 +14,20 @@ from datetime import datetime, timedelta, timezone
 from urllib.request import Request, urlopen
 
 OUTPUT_PATH = "data.json"
-MAX_ITEMS = 20
+MAX_ITEMS = 200
 TIMEOUT_SECONDS = 15
 USER_AGENT = "Mozilla/5.0 (compatible; EnkaNewsBot/1.0; +personal use)"
 
-# artist -> 表示名やキーワード（enka.workの記事タイトル絞り込みに使う）
+# artist -> 表示名やキーワード（タイトルから該当アーティストを判定するのに使う）
 ARTISTS = {
     "青山新": ["青山新"],
     "二見颯一": ["二見颯一"],
     "真田ナオキ": ["真田ナオキ"],
 }
 
+# 上記3名の専用フィードは artist を決め打ち、
+# enka.work のような一般ポータルは None にして
+# タイトルから自動判定（分からなければ汎用ラベル）にする
 FEEDS = [
     # (artist_label_or_None, category, feed_url)
     ("青山新", "news", "http://rssblog.ameba.jp/aoyamashin2020/rss20.xml"),
@@ -34,9 +37,11 @@ FEEDS = [
     (None, "news", "https://enka.work/feed/"),
 ]
 
-# これより古い情報は、件数が少なくても載せない
-# （「新着」なのに1年前の動画が混ざる、という見え方を防ぐため）
-MAX_AGE_DAYS = 60
+GENERIC_ARTIST_LABEL = "演歌ニュース"
+
+# これより古い情報は基本的に載せない（ただし件数のためではなく、
+# 明らかに無関係な過去の情報が混ざるのを防ぐための緩やかな上限）
+MAX_AGE_DAYS = 365
 
 
 def fetch(url: str) -> bytes:
@@ -59,9 +64,7 @@ def parse_rss2(root, default_artist, category):
         link = fields.get("link", "")
         pub_date = fields.get("pubDate", "")
         date = parse_date_guess(pub_date)
-        artist = default_artist or guess_artist(title)
-        if not artist:
-            continue
+        artist = default_artist or guess_artist(title, allow_generic=True)
         items.append({
             "category": guess_category(title, category),
             "artist": artist,
@@ -89,9 +92,7 @@ def parse_atom(root, default_artist, category):
             elif name == "published":
                 published = (child.text or "").strip()
         date = parse_date_guess(published)
-        artist = default_artist or guess_artist(title)
-        if not artist:
-            continue
+        artist = default_artist or guess_artist(title, allow_generic=True)
         items.append({
             "category": guess_category(title, category),
             "artist": artist,
@@ -102,11 +103,33 @@ def parse_atom(root, default_artist, category):
     return items
 
 
-def guess_artist(title: str):
+BRACKET_PATTERN = re.compile(r"^[【\[](.{1,12}?)[】\]]")
+DASH_PATTERN = re.compile(r"^(.{1,12}?)\s*[－–—-]\s*")
+
+
+def guess_artist(title: str, allow_generic: bool = False):
+    """タイトル文字列からアーティスト名を判定する。
+
+    既知の3名（青山新・二見颯一・真田ナオキ）に一致すればその名前を返す。
+    一般ポータル（enka.work等）由来で誰の記事か分からない場合、
+    allow_generic=True なら「【名前】」「名前 – 」のような表記から
+    それっぽい名前を抜き出すか、汎用ラベルにフォールバックする
+    （＝対象を3名に限定せず、若手演歌の情報を広く拾うため）。
+    """
     for artist, keywords in ARTISTS.items():
         if any(kw in title for kw in keywords):
             return artist
-    return None
+
+    if not allow_generic:
+        return None
+
+    match = BRACKET_PATTERN.match(title) or DASH_PATTERN.match(title)
+    if match:
+        candidate = match.group(1).strip()
+        if candidate:
+            return candidate
+
+    return GENERIC_ARTIST_LABEL
 
 
 SINGLE_KEYWORDS = ["新曲", "デビュー", "リリース", "発売", "アルバム", "配信開始"]

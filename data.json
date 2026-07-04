@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-04T14:52:47.003761+09:00",
+  "updatedAt": "2026-07-04T15:08:43.474796+09:00",
   "items": [
     {
       "category": "live",
@@ -14,6 +14,20 @@
       "headline": "✨「二見颯一ディナーショーin名古屋」のお知らせ✨",
       "url": "https://ameblo.jp/futamisoichi1026/entry-12971663264.html",
       "date": "2026-07-04"
+    },
+    {
+      "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "週間USEN HIT演歌/歌謡曲ランキング（2026年7月1日付）",
+      "url": "https://enka.work/usenhitranking_20260701/",
+      "date": "2026-07-04"
+    },
+    {
+      "category": "news",
+      "artist": "須賀亮雄",
+      "headline": "須賀亮雄 – 蔵王の風",
+      "url": "https://enka.work/sugaryo_zaonokaze/",
+      "date": "2026-07-03"
     },
     {
       "category": "news",
@@ -45,6 +59,55 @@
     },
     {
       "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "週間オリコン 演歌・歌謡曲シングルランキング（2026年07月06日付）",
+      "url": "https://enka.work/oriconranking_20260706/",
+      "date": "2026-07-01"
+    },
+    {
+      "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "演歌の女王が堂々の首位！DAM2026年上半期カラオケランキング発表で見えた天童よしみ・モナキ・三山ひろしの熱い支持と令和演歌の未来",
+      "url": "https://enka.work/enkanews_dam2026enkaraokekami/",
+      "date": "2026-06-29"
+    },
+    {
+      "category": "news",
+      "artist": "西山琳久",
+      "headline": "西山琳久 – おんじい(A,B,Cタイプ)",
+      "url": "https://enka.work/nisiyamariku_onziabc/",
+      "date": "2026-06-29"
+    },
+    {
+      "category": "news",
+      "artist": "伍代夏子",
+      "headline": "伍代夏子 – 流転の花",
+      "url": "https://enka.work/godainatuko_rutenhana/",
+      "date": "2026-06-28"
+    },
+    {
+      "category": "news",
+      "artist": "香西かおり",
+      "headline": "香西かおり – THE 香西かおり",
+      "url": "https://enka.work/kozaikaori_thebest/",
+      "date": "2026-06-28"
+    },
+    {
+      "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "ユニバーサルミュージック演歌歌謡曲ベスト100",
+      "url": "https://enka.work/universal_musicenkabest100/",
+      "date": "2026-06-28"
+    },
+    {
+      "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "週間USEN HIT演歌/歌謡曲ランキング（2026年6月24日付）",
+      "url": "https://enka.work/usenhitranking_20260624/",
+      "date": "2026-06-27"
+    },
+    {
+      "category": "news",
       "artist": "二見颯一",
       "headline": "✨「GMO渋谷エンタメ祭2026」のお知らせ✨",
       "url": "https://ameblo.jp/futamisoichi1026/entry-12970865926.html",
@@ -72,11 +135,60 @@
       "date": "2026-06-25"
     },
     {
+      "category": "single",
+      "artist": "演歌ニュース",
+      "headline": "演歌 歌謡曲 新曲発売 2026年07月22日",
+      "url": "https://enka.work/2026_0722/",
+      "date": "2026-06-25"
+    },
+    {
+      "category": "news",
+      "artist": "北川裕二",
+      "headline": "北川裕二 – 戎橋ブルース",
+      "url": "https://enka.work/kitagawayuzi_ebisublues/",
+      "date": "2026-06-25"
+    },
+    {
       "category": "news",
       "artist": "真田ナオキ",
       "headline": "真田ナオキ – 沈む前に…/プルメリア ラプソディ(サンセット盤,プルメリア盤,トロピカル盤)",
       "url": "https://enka.work/sanadanaoki_sizupsupt/",
       "date": "2026-06-25"
+    },
+    {
+      "category": "news",
+      "artist": "津吹みゆ",
+      "headline": "津吹みゆ – あふれる涙が伝うとき",
+      "url": "https://enka.work/tubukimiyu_ahurerunamida/",
+      "date": "2026-06-24"
+    },
+    {
+      "category": "news",
+      "artist": "山本譲二",
+      "headline": "山本譲二 – 桜龍～さくらりゅう～",
+      "url": "https://enka.work/yamamotojoji_sakuraryu/",
+      "date": "2026-06-24"
+    },
+    {
+      "category": "news",
+      "artist": "演歌ニュース",
+      "headline": "週間オリコン 演歌・歌謡曲シングルランキング（2026年06月29日付）",
+      "url": "https://enka.work/oriconranking_20260629/",
+      "date": "2026-06-24"
+    },
+    {
+      "category": "news",
+      "artist": "入山アキ子",
+      "headline": "入山アキ子 – 江差恋女",
+      "url": "https://enka.work/iriyamakiko_esakoiona/",
+      "date": "2026-06-23"
+    },
+    {
+      "category": "news",
+      "artist": "吉村明紘",
+      "headline": "吉村明紘 – 俺でいいなら",
+      "url": "https://enka.work/yosimurakihiro_ordeiinara/",
+      "date": "2026-06-23"
     },
     {
       "category": "live",
@@ -105,6 +217,48 @@
       "headline": "【vlog】福井…恐竜多め",
       "url": "https://www.youtube.com/watch?v=QPa5EW45HHo",
       "date": "2026-05-17"
+    },
+    {
+      "category": "news",
+      "artist": "青山新",
+      "headline": "今年も一年",
+      "url": "https://ameblo.jp/aoyamashin2020/entry-12951872725.html",
+      "date": "2025-12-31"
+    },
+    {
+      "category": "news",
+      "artist": "青山新",
+      "headline": "レッツゴー",
+      "url": "https://ameblo.jp/aoyamashin2020/entry-12950762840.html",
+      "date": "2025-12-21"
+    },
+    {
+      "category": "news",
+      "artist": "青山新",
+      "headline": "傘がない",
+      "url": "https://ameblo.jp/aoyamashin2020/entry-12950714995.html",
+      "date": "2025-12-20"
+    },
+    {
+      "category": "news",
+      "artist": "青山新",
+      "headline": "ブログです",
+      "url": "https://ameblo.jp/aoyamashin2020/entry-12950616742.html",
+      "date": "2025-12-19"
+    },
+    {
+      "category": "news",
+      "artist": "二見颯一",
+      "headline": "【＃SOandsound】『糸』ゲスト：原田波人",
+      "url": "https://www.youtube.com/watch?v=MlYkIQTpf2I",
+      "date": "2025-11-03"
+    },
+    {
+      "category": "news",
+      "artist": "二見颯一",
+      "headline": "【＃SOandsound】『366日』ゲスト：原田波人",
+      "url": "https://www.youtube.com/watch?v=Pfob7TCkXAk",
+      "date": "2025-10-12"
     }
   ]
 }
