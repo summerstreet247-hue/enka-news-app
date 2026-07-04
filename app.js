@@ -1,4 +1,4 @@
-const CATEGORY_LABEL = { single: "新曲", live: "ライブ", news: "ニュース" };
+const CATEGORY_LABEL = { single: "新曲", live: "ライブ", news: "ニュース", youtube: "YouTube" };
 const STORAGE_KEY = "enka-news-cache-v1";
 const PAGE_SIZE = 100;
 const MAX_TOTAL = 200;
@@ -80,8 +80,9 @@ function renderFeed() {
       const image = item.image
         ? `<img class="card-image" src="${item.image}" alt="" loading="lazy" onerror="this.remove()">`
         : "";
+      const videoAttr = item.videoId ? ` data-video-id="${item.videoId}"` : "";
       return `
-        <a class="card" href="${item.url}" target="_blank" rel="noopener">
+        <a class="card" href="${item.url}" target="_blank" rel="noopener"${videoAttr}>
           <div class="card-top">
             <span class="tag ${cls}">${label}</span>
             <span class="artist">${item.artist}</span>
@@ -149,6 +150,35 @@ function applyData(data, { stale }) {
   state.stale = !!stale;
   renderAll();
 }
+
+// --- YouTube動画はアプリ内で埋め込み再生する ---
+const videoModal = document.getElementById("video-modal");
+const videoFrameWrap = document.getElementById("video-frame-wrap");
+
+function openVideoModal(videoId) {
+  videoFrameWrap.innerHTML = `<iframe
+    src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+    frameborder="0"></iframe>`;
+  videoModal.hidden = false;
+}
+
+function closeVideoModal() {
+  videoModal.hidden = true;
+  videoFrameWrap.innerHTML = ""; // 再生を止めるため、iframeごと消す
+}
+
+document.getElementById("feed").addEventListener("click", (event) => {
+  const card = event.target.closest(".card[data-video-id]");
+  if (!card) return;
+  event.preventDefault();
+  openVideoModal(card.dataset.videoId);
+});
+document.getElementById("video-modal-close").addEventListener("click", closeVideoModal);
+videoModal.addEventListener("click", (event) => {
+  if (event.target === videoModal) closeVideoModal();
+});
 
 // --- 歌手フィルターボタン ---
 document.getElementById("artist-filters").addEventListener("click", (event) => {

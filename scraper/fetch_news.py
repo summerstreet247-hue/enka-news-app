@@ -32,9 +32,12 @@ FEEDS = [
     # (artist_label_or_None, category, feed_url)
     ("青山新", "news", "http://rssblog.ameba.jp/aoyamashin2020/rss20.xml"),
     ("二見颯一", "news", "http://rssblog.ameba.jp/futamisoichi1026/rss20.xml"),
-    ("二見颯一", "news", "https://www.youtube.com/feeds/videos.xml?channel_id=UCtyckgoaOUloMfpnCKKW4Gg"),
     ("真田ナオキ", "news", "http://rssblog.ameba.jp/naoki0427sanada/rss20.xml"),
     (None, "news", "https://enka.work/feed/"),
+    # YouTube公式チャンネル（新着動画は「youtube」カテゴリで表示し、アプリ内で埋め込み再生する）
+    ("青山新", "youtube", "https://www.youtube.com/feeds/videos.xml?channel_id=UCfRsj7BScpJT7Lobmn62bYg"),
+    ("二見颯一", "youtube", "https://www.youtube.com/feeds/videos.xml?channel_id=UCtyckgoaOUloMfpnCKKW4Gg"),
+    ("真田ナオキ", "youtube", "https://www.youtube.com/feeds/videos.xml?channel_id=UCPtrjcuTy0r2C6a6ImTeYUg"),
 ]
 
 GENERIC_ARTIST_LABEL = "演歌ニュース"
@@ -78,11 +81,13 @@ def parse_rss2(root, default_artist, category):
 
 
 def parse_atom(root, default_artist, category):
+    # Atomフィードは今のところYouTubeチャンネルのみが情報源のため、
+    # 曲名・ライブ名のキーワード判定はせず、常に「youtube」カテゴリとして扱う。
     items = []
     for entry in root.iter():
         if strip_ns(entry.tag) != "entry":
             continue
-        title, link, published, image = "", "", "", None
+        title, link, published, image, video_id = "", "", "", None, None
         for child in entry:
             name = strip_ns(child.tag)
             if name == "title":
@@ -93,6 +98,8 @@ def parse_atom(root, default_artist, category):
                     link = href
             elif name == "published":
                 published = (child.text or "").strip()
+            elif name == "videoId":
+                video_id = (child.text or "").strip()
         for descendant in entry.iter():
             if strip_ns(descendant.tag) == "thumbnail":
                 image = descendant.attrib.get("url")
@@ -100,12 +107,13 @@ def parse_atom(root, default_artist, category):
         date = parse_date_guess(published)
         artist = default_artist or guess_artist(title, allow_generic=True)
         items.append({
-            "category": guess_category(title, category),
+            "category": category,
             "artist": artist,
             "headline": title,
             "url": link,
             "date": date,
             "image": image,
+            "videoId": video_id,
         })
     return items
 
