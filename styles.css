@@ -299,6 +299,9 @@ a.card:active { transform: scale(0.99); }
   justify-content: center;
   padding: 16px;
 }
+.video-modal[hidden] {
+  display: none;
+}
 .video-modal-inner {
   width: 100%;
   max-width: 640px;
