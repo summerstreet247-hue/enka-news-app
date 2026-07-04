@@ -216,6 +216,15 @@ if ("serviceWorker" in navigator) {
       // Offline caching is a bonus, not a requirement — ignore failures silently.
     });
   });
+
+  // 新しいバージョンが公開されたら、ホーム画面アプリでも自動で最新版に切り替える
+  // （毎回手動でアプリを閉じ直してもらう必要をなくすため）。
+  let reloadedOnce = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloadedOnce) return;
+    reloadedOnce = true;
+    window.location.reload();
+  });
 }
 
 loadFeed();

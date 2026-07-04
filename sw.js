@@ -1,4 +1,4 @@
-const CACHE_NAME = "enka-news-shell-v1";
+const CACHE_NAME = "enka-news-shell-v2";
 const SHELL_FILES = [
   "./",
   "index.html",
@@ -30,22 +30,16 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
-  // data.json: try the network first for freshness, fall back to cache if offline.
-  if (request.url.includes("data.json")) {
-    event.respondWith(
-      fetch(request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-          return res;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-
-  // App shell: cache-first, so the app opens instantly and offline.
+  // ネットワークがあればそちらを優先し、オフライン時だけキャッシュを使う。
+  // これで「ホーム画面に追加したアプリだけ画面が更新されない」問題を防ぐ
+  // （data.jsonだけでなく、画面本体のファイルも同じ考え方にする）。
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request))
+    fetch(request)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        return res;
+      })
+      .catch(() => caches.match(request))
   );
 });
