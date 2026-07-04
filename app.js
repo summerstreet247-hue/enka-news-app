@@ -77,6 +77,9 @@ function renderFeed() {
     .map((item) => {
       const label = CATEGORY_LABEL[item.category] || "ニュース";
       const cls = CATEGORY_LABEL[item.category] ? item.category : "news";
+      const image = item.image
+        ? `<img class="card-image" src="${item.image}" alt="" loading="lazy" onerror="this.remove()">`
+        : "";
       return `
         <a class="card" href="${item.url}" target="_blank" rel="noopener">
           <div class="card-top">
@@ -84,6 +87,7 @@ function renderFeed() {
             <span class="artist">${item.artist}</span>
           </div>
           <p class="headline">${item.headline}</p>
+          ${image}
           <p class="card-date">${formatDate(item.date)}</p>
         </a>`;
     })
@@ -154,13 +158,37 @@ document.getElementById("artist-filters").addEventListener("click", (event) => {
 document.getElementById("reset-filter").addEventListener("click", () => setFilter(null));
 document.getElementById("load-more-btn").addEventListener("click", loadMore);
 
+// --- 更新中の見た目（プルリフレッシュ・最終更新タップ、共通） ---
+const pullIndicator = document.getElementById("pull-indicator");
+const pullLabel = pullIndicator.querySelector(".pull-label");
+let refreshing = false;
+
+async function refreshWithFeedback() {
+  if (refreshing) return;
+  refreshing = true;
+  pullIndicator.classList.add("spinning");
+  pullIndicator.style.height = "48px";
+  pullLabel.textContent = "更新しています…";
+  await loadFeed();
+  pullIndicator.classList.remove("spinning");
+  pullIndicator.style.height = "0px";
+  refreshing = false;
+}
+
+// --- 「最終更新」をタップしても再取得できるようにする ---
+document.getElementById("updated-bar").addEventListener("click", refreshWithFeedback);
+
+// --- 右上の閉じるボタン ---
+document.getElementById("close-btn").addEventListener("click", () => {
+  // ブラウザの安全上の制約で、必ず閉じられるとは限らない
+  // （特にiPhone/iPadのSafariでは、ウェブページ側から閉じることが許可されていないことが多い）。
+  window.close();
+});
+
 // --- 下に引っ張って更新（プルリフレッシュ） ---
 (function setupPullToRefresh() {
-  const indicator = document.getElementById("pull-indicator");
-  const label = indicator.querySelector(".pull-label");
   let startY = null;
   let pulling = false;
-  let refreshing = false;
 
   window.addEventListener(
     "touchstart",
@@ -183,29 +211,22 @@ document.getElementById("load-more-btn").addEventListener("click", loadMore);
       const delta = event.touches[0].clientY - startY;
       if (delta <= 0) return;
       const height = Math.min(delta * 0.6, PULL_THRESHOLD + 20);
-      indicator.style.height = `${height}px`;
-      label.textContent = height >= PULL_THRESHOLD ? "離すと更新します" : "引っ張って更新";
+      pullIndicator.style.height = `${height}px`;
+      pullLabel.textContent = height >= PULL_THRESHOLD ? "離すと更新します" : "引っ張って更新";
     },
     { passive: true }
   );
 
   window.addEventListener("touchend", async () => {
     if (!pulling) return;
-    const height = parseFloat(indicator.style.height || "0");
+    const height = parseFloat(pullIndicator.style.height || "0");
     pulling = false;
     startY = null;
 
-    if (height >= PULL_THRESHOLD && !refreshing) {
-      refreshing = true;
-      indicator.classList.add("spinning");
-      indicator.style.height = "48px";
-      label.textContent = "更新しています…";
-      await loadFeed();
-      indicator.classList.remove("spinning");
-      indicator.style.height = "0px";
-      refreshing = false;
+    if (height >= PULL_THRESHOLD) {
+      await refreshWithFeedback();
     } else {
-      indicator.style.height = "0px";
+      pullIndicator.style.height = "0px";
     }
   });
 })();

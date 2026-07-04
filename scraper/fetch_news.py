@@ -65,12 +65,14 @@ def parse_rss2(root, default_artist, category):
         pub_date = fields.get("pubDate", "")
         date = parse_date_guess(pub_date)
         artist = default_artist or guess_artist(title, allow_generic=True)
+        html_body = fields.get("encoded") or fields.get("description") or ""
         items.append({
             "category": guess_category(title, category),
             "artist": artist,
             "headline": title,
             "url": link,
             "date": date,
+            "image": extract_image(html_body),
         })
     return items
 
@@ -80,7 +82,7 @@ def parse_atom(root, default_artist, category):
     for entry in root.iter():
         if strip_ns(entry.tag) != "entry":
             continue
-        title, link, published = "", "", ""
+        title, link, published, image = "", "", "", None
         for child in entry:
             name = strip_ns(child.tag)
             if name == "title":
@@ -91,6 +93,10 @@ def parse_atom(root, default_artist, category):
                     link = href
             elif name == "published":
                 published = (child.text or "").strip()
+        for descendant in entry.iter():
+            if strip_ns(descendant.tag) == "thumbnail":
+                image = descendant.attrib.get("url")
+                break
         date = parse_date_guess(published)
         artist = default_artist or guess_artist(title, allow_generic=True)
         items.append({
@@ -99,8 +105,35 @@ def parse_atom(root, default_artist, category):
             "headline": title,
             "url": link,
             "date": date,
+            "image": image,
         })
     return items
+
+
+IMG_TAG_PATTERN = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
+IMG_SRC_PATTERN = re.compile(r'src=["\']([^"\']+)["\']', re.IGNORECASE)
+IMG_SIZE_PATTERN = re.compile(r'(width|height)=["\']?(\d+)', re.IGNORECASE)
+BAD_IMAGE_HINTS = ("icon", "editor_link", ".svg", "avatar", "emoji", "banner")
+
+
+def extract_image(html: str):
+    """本文HTMLから、記事内容を表す実写真らしき画像のURLを1つ抜き出す。
+    アイコンや小さな装飾画像（絵文字・リンクアイコン等）は除外する。
+    見つからなければ None を返し、その記事は画像なしで表示される。"""
+    if not html:
+        return None
+    for tag in IMG_TAG_PATTERN.findall(html):
+        src_match = IMG_SRC_PATTERN.search(tag)
+        if not src_match:
+            continue
+        src = src_match.group(1)
+        if any(hint in src.lower() for hint in BAD_IMAGE_HINTS):
+            continue
+        sizes = {key.lower(): int(value) for key, value in IMG_SIZE_PATTERN.findall(tag)}
+        if sizes.get("width", 999) < 60 or sizes.get("height", 999) < 60:
+            continue
+        return src
+    return None
 
 
 BRACKET_PATTERN = re.compile(r"^[【\[](.{1,12}?)[】\]]")

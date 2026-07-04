@@ -62,6 +62,25 @@ html, body {
   position: relative;
 }
 
+.close-btn {
+  position: absolute;
+  top: max(env(safe-area-inset-top, 14px), 14px);
+  right: 14px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #d0342c;
+  color: #ffffff;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 700;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.close-btn:active { background: #b32a23; }
+
 /* Pull-to-refresh indicator */
 .pull-indicator {
   display: flex;
@@ -108,17 +127,24 @@ header.app-header .app-sub {
 }
 
 .updated-bar {
+  display: block;
+  width: calc(100% - 40px);
   margin: 0 20px 14px;
   padding: 12px 16px;
   background: var(--accent-soft);
+  border: none;
   border-radius: 12px;
   color: var(--accent);
   font-size: 15px;
   font-weight: 700;
+  font-family: inherit;
   text-align: center;
 }
 .updated-bar.stale {
   color: var(--accent-warm);
+}
+.updated-bar:active {
+  filter: brightness(0.95);
 }
 
 .artist-filters {
@@ -213,6 +239,16 @@ a.card:active { transform: scale(0.99); }
   color: var(--ink);
   margin: 0 0 10px;
   text-wrap: balance;
+}
+
+.card-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 0 12px;
+  background: var(--accent-soft);
 }
 
 .card-date {

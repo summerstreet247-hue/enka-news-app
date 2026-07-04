@@ -17,6 +17,8 @@
 </head>
 <body>
   <div class="app" id="app">
+    <button id="close-btn" class="close-btn" aria-label="アプリを閉じる">×</button>
+
     <div id="pull-indicator" class="pull-indicator"><span class="spinner"></span><span class="pull-label">引っ張って更新</span></div>
 
     <header class="app-header">
@@ -24,7 +26,7 @@
       <p class="app-sub">好きな歌手の最新情報が、ここに集まります</p>
     </header>
 
-    <div id="updated-bar" class="updated-bar">読み込んでいます…</div>
+    <button id="updated-bar" class="updated-bar" type="button">読み込んでいます…</button>
 
     <div class="artist-filters" id="artist-filters">
       <button class="filter-btn" data-artist="青山新">青山新</button>
