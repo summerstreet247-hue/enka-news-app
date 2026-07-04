@@ -10,7 +10,7 @@ RSSフィードを情報源として data.json を生成する。
 import json
 import re
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from urllib.request import Request, urlopen
 
 OUTPUT_PATH = "data.json"
@@ -27,11 +27,16 @@ ARTISTS = {
 
 FEEDS = [
     # (artist_label_or_None, category, feed_url)
+    ("青山新", "news", "http://rssblog.ameba.jp/aoyamashin2020/rss20.xml"),
     ("二見颯一", "news", "http://rssblog.ameba.jp/futamisoichi1026/rss20.xml"),
     ("二見颯一", "news", "https://www.youtube.com/feeds/videos.xml?channel_id=UCtyckgoaOUloMfpnCKKW4Gg"),
     ("真田ナオキ", "news", "http://rssblog.ameba.jp/naoki0427sanada/rss20.xml"),
     (None, "news", "https://enka.work/feed/"),
 ]
+
+# これより古い情報は、件数が少なくても載せない
+# （「新着」なのに1年前の動画が混ざる、という見え方を防ぐため）
+MAX_AGE_DAYS = 60
 
 
 def fetch(url: str) -> bytes:
@@ -153,9 +158,12 @@ def collect() -> list:
         else:
             all_items.extend(parse_rss2(root, artist, category))
 
-    # 新しい順に並べ、上限件数に切り詰める
-    all_items.sort(key=lambda x: x["date"], reverse=True)
-    return all_items[:MAX_ITEMS]
+    # 一定期間より古いものは「新着」として不自然なので除外してから、
+    # 新しい順に並べて上限件数に切り詰める
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=MAX_AGE_DAYS)).date().isoformat()
+    recent_items = [it for it in all_items if it["date"] >= cutoff]
+    recent_items.sort(key=lambda x: x["date"], reverse=True)
+    return recent_items[:MAX_ITEMS]
 
 
 def main():
