@@ -76,6 +76,7 @@ def parse_rss2(root, default_artist, category):
             "url": link,
             "date": date,
             "image": extract_image(html_body),
+            "tv": is_tv_related(title),
         })
     return items
 
@@ -114,6 +115,7 @@ def parse_atom(root, default_artist, category):
             "date": date,
             "image": image,
             "videoId": video_id,
+            "tv": is_tv_related(title),
         })
     return items
 
@@ -175,6 +177,22 @@ def guess_artist(title: str, allow_generic: bool = False):
 
 SINGLE_KEYWORDS = ["新曲", "デビュー", "リリース", "発売", "アルバム", "配信開始"]
 LIVE_KEYWORDS = ["ライブ", "コンサート", "ツアー", "公演", "ディナーショー", "リサイタル"]
+
+# NHK・民放・NHK BS・民放BSのテレビ番組出演情報を判定するためのキーワード
+TV_KEYWORDS = [
+    "NHK", "Eテレ", "うたコン", "歌謡コンサート",
+    "BS日テレ", "BSテレ東", "BSテレビ東京", "BSフジ", "BS朝日",
+    "BS-TBS", "BSTBS", "BS10", "BS11", "BSJapanext", "BSよしもと", "BS松竹東急",
+    "日本テレビ", "日テレ", "テレビ朝日", "テレ朝", "TBSテレビ", "TBS",
+    "テレビ東京", "フジテレビ", "フジTV",
+    "生出演", "特番", "テレビ", "放送",
+]
+
+
+def is_tv_related(title: str) -> bool:
+    """NHK・民放・NHK BS・民放BSのテレビ番組出演情報かどうかを、
+    タイトルに含まれる局名・番組名の言葉づかいから判定する。"""
+    return any(kw in title for kw in TV_KEYWORDS)
 
 
 def guess_category(title: str, fallback: str) -> str:

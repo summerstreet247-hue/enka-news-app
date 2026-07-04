@@ -9,6 +9,7 @@ const state = {
   updatedAt: null,
   stale: false,
   filter: null, // null = すべて、それ以外は artist 名
+  tvOnly: false, // true = テレビ出演情報だけに絞る
   visibleCount: PAGE_SIZE,
 };
 
@@ -28,8 +29,10 @@ function formatUpdatedAt(iso) {
 }
 
 function currentFilteredItems() {
-  if (!state.filter) return state.allItems;
-  return state.allItems.filter((item) => item.artist === state.filter);
+  let items = state.allItems;
+  if (state.filter) items = items.filter((item) => item.artist === state.filter);
+  if (state.tvOnly) items = items.filter((item) => item.tv);
+  return items;
 }
 
 function renderUpdatedBar() {
@@ -44,16 +47,25 @@ function renderUpdatedBar() {
 }
 
 function renderFilterButtons() {
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
+  document.querySelectorAll(".filter-btn[data-artist]").forEach((btn) => {
     btn.classList.toggle("active", state.filter === btn.dataset.artist);
   });
+  document.getElementById("tv-filter-btn").classList.toggle("active", state.tvOnly);
 }
 
 function renderSectionLabel() {
   const label = document.getElementById("section-label-text");
   const resetBtn = document.getElementById("reset-filter");
-  label.textContent = state.filter ? `${state.filter}の最新情報` : "新着";
-  resetBtn.hidden = !state.filter;
+  let text = "新着";
+  if (state.filter && state.tvOnly) {
+    text = `${state.filter}のテレビ出演情報`;
+  } else if (state.tvOnly) {
+    text = "テレビ出演情報";
+  } else if (state.filter) {
+    text = `${state.filter}の最新情報`;
+  }
+  label.textContent = text;
+  resetBtn.hidden = !state.filter && !state.tvOnly;
 }
 
 function renderFeed() {
@@ -106,6 +118,21 @@ function renderAll() {
 
 function setFilter(artist) {
   state.filter = state.filter === artist ? null : artist;
+  state.visibleCount = PAGE_SIZE;
+  renderAll();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function toggleTvFilter() {
+  state.tvOnly = !state.tvOnly;
+  state.visibleCount = PAGE_SIZE;
+  renderAll();
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function resetFilters() {
+  state.filter = null;
+  state.tvOnly = false;
   state.visibleCount = PAGE_SIZE;
   renderAll();
   window.scrollTo({ top: 0, behavior: "instant" });
@@ -185,7 +212,8 @@ document.getElementById("artist-filters").addEventListener("click", (event) => {
   const btn = event.target.closest(".filter-btn");
   if (btn) setFilter(btn.dataset.artist);
 });
-document.getElementById("reset-filter").addEventListener("click", () => setFilter(null));
+document.getElementById("reset-filter").addEventListener("click", resetFilters);
+document.getElementById("tv-filter-btn").addEventListener("click", toggleTvFilter);
 document.getElementById("load-more-btn").addEventListener("click", loadMore);
 
 // --- 更新中の見た目（プルリフレッシュ・最終更新タップ、共通） ---
