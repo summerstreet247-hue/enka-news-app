@@ -208,13 +208,6 @@ async function refreshWithFeedback() {
 // --- 「最終更新」をタップしても再取得できるようにする ---
 document.getElementById("updated-bar").addEventListener("click", refreshWithFeedback);
 
-// --- 右上の閉じるボタン ---
-document.getElementById("close-btn").addEventListener("click", () => {
-  // ブラウザの安全上の制約で、必ず閉じられるとは限らない
-  // （特にiPhone/iPadのSafariでは、ウェブページ側から閉じることが許可されていないことが多い）。
-  window.close();
-});
-
 // --- 下に引っ張って更新（プルリフレッシュ） ---
 (function setupPullToRefresh() {
   let startY = null;
