@@ -1,0 +1,14 @@
+{
+  "name": "若手演歌歌手最新ニュース！",
+  "short_name": "演歌ニュース",
+  "description": "青山新・二見颯一・真田ナオキと若手演歌歌手の最新情報",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#1c3f5e",
+  "lang": "ja",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

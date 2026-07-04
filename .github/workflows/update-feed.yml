@@ -1,0 +1,56 @@
+name: Update news feed and deploy
+
+on:
+  schedule:
+    - cron: "0 1,7,13,19 * * *"   # 日本時間 10:00 / 16:00 / 22:00 / 4:00 に実行
+  workflow_dispatch: {}            # 手動実行もできるようにしておく
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch latest news
+        run: python3 scraper/fetch_news.py
+
+      - name: Commit updated data.json (if changed)
+        run: |
+          git config user.name "enka-news-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- data.json; then
+            git add data.json
+            git commit -m "chore: update news feed"
+            git push
+          else
+            echo "No changes to data.json"
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
